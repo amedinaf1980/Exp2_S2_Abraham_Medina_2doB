@@ -3,7 +3,8 @@ package bankboston;
 import managers.BancoManager;
 import models.Cliente;
 import utilidades.Grafico;
-import utilidades.ValidarRut;
+import utilidades.Pausa;
+import utilidades.ValidarIngresoDatos;
 
 import java.util.Scanner;
 
@@ -52,38 +53,61 @@ public class Menu {
 	}
 
 	private void registrarCliente() {
-		Grafico.formatoTitulo("******** REGISTRAR CLIENTE ********");
-		Grafico.formatoIngresoDatos("Ingrese el Rut: ");
-		String rut = scanner.nextLine();
+		String rut;
+		String telefono;
 		
-		if (!ValidarRut.esValido(rut)) {
-			Grafico.formatoError("Error: El Rut ingresado no es válido!");
-		    return;
-		}
-		
-		if (bancoManager.buscarCliente(rut) != null) {
-			Grafico.formatoError("Error: El rut ingresado, ya se encuentra en nuestros registros!");
-			return;
-		}
+		while (true) {
+			Grafico.formatoTitulo("******** REGISTRAR CLIENTE ********");
+			Grafico.formatoIngresoDatos("Ingrese Rut (ej: 12.345.678-9) o 's' para salir: ");
+			rut = scanner.nextLine();
 
-		Grafico.formatoIngresoDatos("Ingrese el nombre: ");
+			if (rut.equalsIgnoreCase("s")) {
+				Grafico.formatoError("REGISTRO CANCELADO");
+				Pausa.pausa(scanner);
+				return;	
+			}
+			
+			if (!ValidarIngresoDatos.validarRut(rut)) {
+				Grafico.formatoError("Error: Formato de Rut no válido (ej: 12.345.678-9)");
+				continue;
+			}
+
+			if (bancoManager.buscarCliente(rut) != null) {
+				Grafico.formatoError("Error: El rut ingresado, ya se encuentra en nuestros registros!");
+				continue;
+			} else {
+				break;
+			}
+		}
+		
+		Grafico.formatoIngresoDatos("\nIngrese el nombre: ");
 		String nombre = scanner.nextLine();
-		Grafico.formatoIngresoDatos("Ingrese el apellido paterno: ");
+		Grafico.formatoIngresoDatos("\nIngrese el apellido paterno: ");
 		String apellidoPaterno = scanner.nextLine();
-		Grafico.formatoIngresoDatos("Ingrese el apellido materno: ");
+		Grafico.formatoIngresoDatos("\nIngrese el apellido materno: ");
 		String apellidoMaterno = scanner.nextLine();
-		Grafico.formatoIngresoDatos("Ingrese el domicilio: ");
+		Grafico.formatoIngresoDatos("\nIngrese el domicilio: ");
 		String domicilio = scanner.nextLine();
-		Grafico.formatoIngresoDatos("Ingrese la comuna: ");
+		Grafico.formatoIngresoDatos("\nIngrese la comuna: ");
 		String comuna = scanner.nextLine();
-		Grafico.formatoIngresoDatos("Ingrese el número de teléfono: ");
-		int telefono = scanner.nextInt();
-		scanner.nextLine();
+		
+		while (true) {
+		Grafico.formatoIngresoDatos("\nIngrese número telefónico (ej: 12345678)");
+		System.out.print("(+56 9)");
+		telefono = scanner.nextLine();
+		
+		if (!ValidarIngresoDatos.validarTelefono(telefono)) {
+			Grafico.formatoError("Error: Ingrese los 8 digitos del número telefónico!");
+			continue;
+		}
+		break;
+		}
+		
 		int numeroCuenta = Integer.parseInt(rut.replaceAll("[^0-9]", ""));
 		try {
 			Cliente nuevoCliente = new Cliente(rut, nombre, apellidoPaterno, apellidoMaterno, domicilio, comuna,
 					telefono, numeroCuenta);
-			if (nuevoCliente.registrarCliente() && bancoManager.agregarCliente(nuevoCliente)) {
+			if (nuevoCliente.registrarCliente(scanner) && bancoManager.agregarCliente(nuevoCliente)) {
 				clienteActual = nuevoCliente;
 			}
 		} catch (IllegalArgumentException e) {
@@ -92,77 +116,118 @@ public class Menu {
 	}
 
 	private void buscarCliente() {
+		String rut;
+		
+		while (true) {
 		Grafico.formatoTitulo("******** BUSCAR CLIENTE ********");
-		Grafico.formatoIngresoDatos("Ingrese el rut a buscar: ");
-		String rut = scanner.nextLine();
+		Grafico.formatoIngresoDatos("Ingrese rut (ej: 12.345.678-9) o 's' para cancelar: ");
+		rut = scanner.nextLine();
 
+		if (rut.equalsIgnoreCase("s")) {
+			Grafico.formatoError("BÚSQUEDA CANCELADA");
+			Pausa.pausa(scanner);
+			return;	
+		}
+		
+		if (!ValidarIngresoDatos.validarRut(rut)) {
+			Grafico.formatoError("Error: Formato de Rut no válido (ej: 12.345.678-9)");
+			continue;
+		}
+		
 		Cliente cliente = bancoManager.buscarCliente(rut);
 
 		if (cliente != null) {
 			Grafico.lineaSeparacion();
-			cliente.mostrarInformacionCliente();
+			cliente.mostrarInformacionCliente(scanner);
 			clienteActual = cliente;
+			break;
 		} else {
 			Grafico.formatoError("Error: No se encontró un cliente con el rut ingresado!");
+			Pausa.pausa(scanner);
+		}
 		}
 	}
 
 	private void verDatosCliente() {
 		if (clienteActual == null) {
 			Grafico.formatoError("Error: No hay cliente seleccionado o registrado!");
+			Pausa.pausa(scanner);
 			return;
 		}
 		System.out.println();
-		clienteActual.mostrarInformacionCliente();
+		clienteActual.mostrarInformacionCliente(scanner);
 	}
 
 	private void depositarDinero() {
 		if (clienteActual == null) {
 			Grafico.formatoError("Error: No hay cliente seleccionado o registrado!");
+			Pausa.pausa(scanner);
 			return;
 		}
-		Grafico.formatoIngresoDatos("Ingrese monto a depositar: ");
-		try {
-			int monto = Integer.parseInt(scanner.nextLine());
-			if (monto <= 0) {
-				Grafico.formatoError("Error: El monto debe ser mayor a cero!");
-				return;
+		while (true) {
+			Grafico.formatoTitulo("******** DEPOSITO ********");
+			Grafico.formatoIngresoDatos("Ingrese monto a depositar: ");
+			try {
+				int monto = Integer.parseInt(scanner.nextLine());
+				if (monto <= 0) {
+					Grafico.formatoError("Error: El monto debe ser mayor a cero!");
+					continue;
+				}
+				if (clienteActual.getCuenta().depositar(monto, scanner)) {
+					Grafico.formatoExito("DEPOSITO REALIZADO EXITOSAMENTE");
+					System.out.println(Grafico.FORMATO_DINERO.format(monto));
+					Pausa.pausa(scanner);
+					break;
+				}
+			} catch (NumberFormatException e) {
+				Grafico.formatoError("Error: El monto ingresado no es válido!");
 			}
-			if (clienteActual.getCuenta().depositar(monto)) {
-				Grafico.formatoExito("Depósito realizado con éxito!");
-			}
-		} catch (NumberFormatException e) {
-			Grafico.formatoError("Error: El monto ingresado no es válido!");
 		}
 	}
-
+	
 	private void girarDinero() {
 		if (clienteActual == null) {
 			Grafico.formatoError("Error: No hay cliente seleccionado o registrado!");
+			Pausa.pausa(scanner);
 			return;
 		}
-		Grafico.formatoIngresoDatos("Ingrese monto a girar: ");
-		try {
-			int monto = Integer.parseInt(scanner.nextLine());
-			if (monto <= 0) {
-				Grafico.formatoError("Error: El monto debe ser mayor a cero!");
-				return;
+		
+		if (clienteActual.getCuenta().consultarSaldo() <= 0) {
+			Grafico.formatoError("Error: La cuenta actual no tiene saldo disponible!");
+			Pausa.pausa(scanner);
+			return;
+		}
+		
+		while (true) {
+			Grafico.formatoTitulo("******** GIRO ********");
+			Grafico.formatoIngresoDatos("Ingrese monto a girar: ");
+			try {
+				int monto = Integer.parseInt(scanner.nextLine());
+				if (monto <= 0) {
+					Grafico.formatoError("Error: El monto debe ser mayor a cero!");
+					continue;
+				}
+				if (clienteActual.getCuenta().girar(monto, scanner)) {
+					Grafico.formatoExito("GIRO REALIZADO EXITOSAMENTE");
+					System.out.println(Grafico.FORMATO_DINERO.format(monto));
+					Pausa.pausa(scanner);
+					break;
+				}
+			} catch (NumberFormatException e) {
+				Grafico.formatoError("Error: El monto ingresado no es válido!");
 			}
-			if (clienteActual.getCuenta().girar(monto)) {
-				Grafico.formatoExito("Giro realizado con éxito!");
-			}
-		} catch (NumberFormatException e) {
-			Grafico.formatoError("Error: El monto ingresado no es válido!");
 		}
 	}
 
 	private void consultarSaldo() {
 		if (clienteActual == null) {
 			Grafico.formatoError("Error: No hay cliente seleccionado o registrado!");
+			Pausa.pausa(scanner);
 			return;
 		}
+		Grafico.formatoTitulo("******** CONSULTA DE SALDO ********");
 		int saldo = clienteActual.getCuenta().consultarSaldo();
-		Grafico.formatoExito("Saldo actual: $" + String.format("%,d", saldo).replace(',', '.'));
+		System.out.println("Saldo actual: $" + String.format("%,d", saldo).replace(',', '.'));
+		Pausa.pausa(scanner);
 	}
-
 }

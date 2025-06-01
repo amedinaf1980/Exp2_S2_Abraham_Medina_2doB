@@ -26,7 +26,7 @@ public class Grafico {
 		System.out.println(color + mensaje + RESET_COLOR);
 	}
 	public static void lineaSeparacion() {
-		System.out.println("\n\n" + LINEA_CONTINUA);
+		System.out.println("\n" + LINEA_CONTINUA);
 		System.out.println(LINEA_SEGMENTADA + "\n");
 	}
 	
@@ -45,11 +45,11 @@ public class Grafico {
 	
 	public static void formatoError(String error) {
 		Grafico.lineaSeparacion();
-		colorTextoConSalto(error + "\n", ROJO_NEGRO);
+		colorTextoConSalto(error, ROJO_NEGRO);
 	}
 	
 	public static void formatoExito(String exito) {
 		Grafico.lineaSeparacion();
-		colorTextoConSalto(exito + "\n", NEGRO_VERDE);
+		colorTextoConSalto(exito, NEGRO_VERDE);
 	}
 }
