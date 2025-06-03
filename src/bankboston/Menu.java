@@ -55,6 +55,7 @@ public class Menu {
 	private void registrarCliente() {
 		String rut;
 		String telefono;
+		String tipoCuenta;
 		
 		while (true) {
 			Grafico.formatoTitulo("******** REGISTRAR CLIENTE ********");
@@ -78,6 +79,31 @@ public class Menu {
 			} else {
 				break;
 			}
+		}
+		
+		while (true) {
+			System.out.println("\n1 . Cuenta de Ahorro");
+			System.out.println("2 . Cuenta Corriente");
+			System.out.println("3 . Cuenta de Crédito");
+			Grafico.formatoIngresoDatos("\nIngrese el número del tipo de cuenta: ");
+			tipoCuenta = scanner.nextLine();
+
+			switch (tipoCuenta) {
+			case "1":
+				tipoCuenta = "Ahorro";
+				break;
+			case "2":
+				tipoCuenta = "Corriente";
+				break;
+			case "3":
+				tipoCuenta = "Crédito";
+				break;
+
+			default:
+				Grafico.formatoError("Error: Seleccione una opción válida");
+				continue;
+			}
+			break;
 		}
 		
 		Grafico.formatoIngresoDatos("\nIngrese el nombre: ");
@@ -106,7 +132,7 @@ public class Menu {
 		int numeroCuenta = Integer.parseInt(rut.replaceAll("[^0-9]", ""));
 		try {
 			Cliente nuevoCliente = new Cliente(rut, nombre, apellidoPaterno, apellidoMaterno, domicilio, comuna,
-					telefono, numeroCuenta);
+					telefono, tipoCuenta, numeroCuenta);
 			if (nuevoCliente.registrarCliente(scanner) && bancoManager.agregarCliente(nuevoCliente)) {
 				clienteActual = nuevoCliente;
 			}
@@ -120,7 +146,7 @@ public class Menu {
 		
 		while (true) {
 		Grafico.formatoTitulo("******** BUSCAR CLIENTE ********");
-		Grafico.formatoIngresoDatos("Ingrese rut (ej: 12.345.678-9) o 's' para cancelar: ");
+		Grafico.formatoIngresoDatos("Ingrese rut (ej: 12.345.678-9) o 's' para salir: ");
 		rut = scanner.nextLine();
 
 		if (rut.equalsIgnoreCase("s")) {

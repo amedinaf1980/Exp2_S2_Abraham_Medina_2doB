@@ -7,7 +7,7 @@ public class BankBoston {
 
 	public static void main(String[] args) {
 
-		Grafico.formatoSaludo("\n\n         !!! BIENVENID@S A BANK BOSTON !!!         \n\n");
+		Grafico.formatoSaludo("\n         !!! BIENVENID@S A BANK BOSTON !!!         \n");
 
 		// ************* COMENTAR SI NO QUIERO DATOS AL INICIO *************
         BancoManager.getInstancia().cargarDatosIniciales();

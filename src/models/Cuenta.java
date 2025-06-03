@@ -2,12 +2,9 @@ package models;
 
 import java.util.Scanner;
 
-import utilidades.Grafico;
-import utilidades.Pausa;
-
-public class Cuenta {
-	private int numeroCuenta;
-	private int saldo;
+public abstract class Cuenta {
+	protected int numeroCuenta;
+	protected int saldo;
 
 	public Cuenta(int numeroCuenta, int saldo) {
 		this.numeroCuenta = numeroCuenta;
@@ -19,44 +16,14 @@ public class Cuenta {
 		System.out.println("Saldo    : " + this.saldo);
 	}
 
+	public abstract boolean depositar(int monto, Scanner scanner);
+
+	public abstract boolean girar(int monto, Scanner scanner);
+
 	public int getNumeroCuenta() {
 		return numeroCuenta;
 	}
-
-	public int getSaldo() {
-		return saldo;
-	}
-
-	public void setSaldo(int saldo) {
-		this.saldo = saldo;
-	}
-
-	public boolean depositar(int monto, Scanner scanner) {
-		if (monto > 0) {
-			saldo += monto;
-			return true;
-		}
-		Grafico.formatoError("Error: El valor ingreaado no es válido.");
-		Pausa.pausa(scanner);
-		return false;
-	}
-
-	public boolean girar(int monto, Scanner scanner) {
-		if (monto <= 0) {
-			Grafico.formatoError("Error: El valor ingreaado no es válido.");
-			Pausa.pausa(scanner);
-			return false;
-		}
-		if (saldo >= monto) {
-			saldo -= monto;
-			return true;
-		} else {
-			Grafico.formatoError("Error: Saldo insuficiente para realizar el giro!");
-			Pausa.pausa(scanner);
-			return false;
-		}
-	}
-
+	
 	public int consultarSaldo() {
 		return saldo;
 	}

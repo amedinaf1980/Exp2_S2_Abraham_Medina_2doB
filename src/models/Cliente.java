@@ -5,7 +5,7 @@ import java.util.Scanner;
 import utilidades.Grafico;
 import utilidades.Pausa;
 
-public class Cliente {
+public class Cliente implements IMostrarDatos{
 	private String rut;
 	private String nombre;
 	private String apellidoPaterno;
@@ -13,11 +13,12 @@ public class Cliente {
 	private String domicilio;
 	private String comuna;
 	private String telefono;
+	private String tipoCuenta;
 	private int numeroCuenta;
-	private Cuenta cuenta;
+	private CuentaAhorro cuenta;
 
 	public Cliente(String rut, String nombre, String apellidoPaterno, String apellidoMaterno, String domicilio,
-			String comuna, String telefono, int numeroCuenta) {
+			String comuna, String telefono, String tipoCuenta, int numeroCuenta) {
 		this.rut = rut;
 		this.nombre = nombre;
 		this.apellidoPaterno = apellidoPaterno;
@@ -25,8 +26,9 @@ public class Cliente {
 		this.domicilio = domicilio;
 		this.comuna = comuna;
 		this.telefono = telefono;
+		this.tipoCuenta = tipoCuenta;
 		this.numeroCuenta = numeroCuenta;
-		this.cuenta = new Cuenta(numeroCuenta, 0);
+		this.cuenta = new CuentaAhorro(numeroCuenta, 0);
 	}
 
 	public Cuenta getCuenta() {
@@ -35,22 +37,29 @@ public class Cliente {
 
 	public boolean registrarCliente(Scanner scanner) {
 		Grafico.formatoExito("CLIENTE REGISTRADO CORRECTAMENTE");
-		System.out.println("Rut      : " + this.rut + "\nNombre   : "
-					+ nombre + " " + apellidoPaterno + " " + apellidoMaterno + "\nDomicilio: " + domicilio + ", "
-					+ comuna + "\nTeléfono : (+56 9)" + telefono + "\nN° Cuenta: " + cuenta.getNumeroCuenta() + "\nSaldo    : "
-					+ Grafico.FORMATO_DINERO.format(cuenta.getSaldo()));
+		System.out.println(""
+				      + "Rut         : " + this.rut
+				    + "\nNombre      : " + nombre + " " + apellidoPaterno + " " + apellidoMaterno
+					+ "\nDomicilio   : " + domicilio + ", " + comuna
+					+ "\nTeléfono    : (+56 9)" + telefono
+					+ "\nTipo Cuenta : " + tipoCuenta
+					+ "\nN° Cuenta   : " + cuenta.getNumeroCuenta()
+					+ "\nSaldo       : " + Grafico.FORMATO_DINERO.format(cuenta.consultarSaldo()));
 		Pausa.pausa(scanner);
 			return true;
 	}
-
+	
+	@Override
 	public void mostrarInformacionCliente(Scanner scanner) {
 		Grafico.formatoTitulo("******** INFORMACION DEL CLIENTE ********");
-		System.out.println("Rut      : " + this.rut);
-		System.out.println("Nombre   : " + nombre + " " + apellidoPaterno + " " + apellidoMaterno);
-		System.out.println("Docimilio: " + domicilio + ", " + comuna);
-		System.out.println("Teléfono : (+56 9)" + telefono);
-		System.out.println("N° Cuenta: " + cuenta.getNumeroCuenta());
-		System.out.println("Saldo    : " + Grafico.FORMATO_DINERO.format(cuenta.getSaldo()));
+		System.out.println(""
+			      + "Rut         : " + this.rut
+			    + "\nNombre      : " + nombre + " " + apellidoPaterno + " " + apellidoMaterno
+				+ "\nDomicilio   : " + domicilio + ", " + comuna
+				+ "\nTeléfono    : (+56 9)" + telefono
+				+ "\nTipo Cuenta : " + tipoCuenta
+				+ "\nN° Cuenta   : " + cuenta.getNumeroCuenta()
+				+ "\nSaldo       : " + Grafico.FORMATO_DINERO.format(cuenta.consultarSaldo()));
 		Pausa.pausa(scanner);
 	}
 
@@ -84,5 +93,9 @@ public class Cliente {
 
 	public int getNumeroCuenta() {
 		return numeroCuenta;
+	}
+
+	public String getTipoCuenta() {
+		return tipoCuenta;
 	}
 }
